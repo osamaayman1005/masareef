@@ -1,0 +1,27 @@
+name: masareef
+description: Personal expense tracker that reads bank SMS. Offline, single user.
+publish_to: none
+
+# versionCode (+1) stays fixed on purpose; CI sets the visible version name.
+# Updates keep data because the applicationId and signing key never change.
+version: 1.0.0+1
+
+environment:
+  sdk: ">=3.5.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  path: ^1.9.0
+  sqflite: ^2.3.3
+
+dev_dependencies:
+  flutter_lints: ^5.0.0
+  flutter_test:
+    sdk: flutter
+  sqflite_common_ffi: ^2.3.3
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/parser/patterns.json

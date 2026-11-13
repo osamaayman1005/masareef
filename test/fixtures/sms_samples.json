@@ -1,0 +1,164 @@
+[
+  {
+    "name": "QNB debit card purchase",
+    "sender": "QNB EGYPT",
+    "body": "Your Debit Card **1234 had a Successful transaction of EGP 20.00 @SEOUDI NEW ZAYED,your available bal.EGP26402.71 for lost/stolen card call 19700",
+    "expect": { "status": "parsed", "kind": "purchase", "amountCents": 2000, "currency": "EGP", "merchant": "SEOUDI NEW ZAYED", "card": "1234" }
+  },
+  {
+    "name": "QNB IPN received",
+    "sender": "QNB EGYPT",
+    "body": "IPN transfer received with amount of EGP 26700.00 on 7141 on 25/10 at 04:08 PM. Ref# b5068ec7. For more details call 19700.",
+    "expect": { "status": "parsed", "kind": "transfer_in", "amountCents": 2670000, "currency": "EGP", "card": "7141" }
+  },
+  {
+    "name": "QNB IPN sent",
+    "sender": "QNB EGYPT",
+    "body": "IPN transfer sent with amount of EGP 52500.00 from 7141 on 10/11 at 01:31 PM. Ref# ebf8f805. For more details call 19700.",
+    "expect": { "status": "parsed", "kind": "transfer_out", "amountCents": 5250000, "currency": "EGP", "card": "7141" }
+  },
+  {
+    "name": "FAB card debited online",
+    "sender": "FABMISR",
+    "body": "Your Card ** 7852 was debited with EGP 179.99 at apple.com/bill  on 11/11/26 04:03. Available limit is EGP 28387 and international limit is USD 1967.54.",
+    "expect": { "status": "parsed", "kind": "purchase", "amountCents": 17999, "currency": "EGP", "merchant": "apple.com/bill", "card": "7852" }
+  },
+  {
+    "name": "FAB card debited whole number",
+    "sender": "FABMISR",
+    "body": "Your Card ** 7852 was debited with EGP 175 at dancing goat sm on 11/11/26 12:20. Available limit is EGP 28206. For inquiries, call 16555.",
+    "expect": { "status": "parsed", "kind": "purchase", "amountCents": 17500, "merchant": "dancing goat sm", "card": "7852" }
+  },
+  {
+    "name": "CIB Arabic debit card",
+    "sender": "CIB",
+    "body": "تم خصم مبلغ EGP 50.79  من بطاقة الخصم المباشر المنتهية بـ **7572 عند Sahl  في 10/11/26 15:52 ، الرصيد المتاح 41627.60 EGP",
+    "expect": { "status": "parsed", "kind": "purchase", "amountCents": 5079, "currency": "EGP", "merchant": "Sahl", "card": "7572" }
+  },
+  {
+    "name": "CIB Arabic restaurant with multi word merchant",
+    "sender": "CIB",
+    "body": "تم خصم مبلغ EGP 560.00  من بطاقة الخصم المباشر المنتهية بـ **7572 عند alriyahi for restauara في 12/11/26 20:08 ، الرصيد المتاح 41067.60 EGP",
+    "expect": { "status": "parsed", "kind": "purchase", "amountCents": 56000, "merchant": "alriyahi for restauara", "card": "7572" }
+  },
+  {
+    "name": "CIB rate notice is not a transaction",
+    "sender": "CIB",
+    "body": "عميل CIB العزيز، برجاء العلم أنه اعتبارًا من يوم الثلاثاء الموافق 10 نوفمبر 2026، سيتم تحديث أسعار العائد على المنتجات المصرفية بالعملات الأجنبية. لمعرفة المزيد، اضغط هنا https://cib.eg/2azq. لا تشارك بياناتك البنكية مع أي شخص. تُطبّق الشروط والأحكام.",
+    "expect": { "status": "failed" }
+  },
+  {
+    "name": "English charged for",
+    "sender": "CIB",
+    "body": "Your CIB debit card ending with #7572 was charged for EGP 1,250.50 at CARREFOUR MAADI on 03/11/26 18:22. Available balance: EGP 39,817.10",
+    "expect": { "status": "parsed", "kind": "purchase", "amountCents": 125050, "merchant": "CARREFOUR MAADI", "card": "7572" }
+  },
+  {
+    "name": "Credit card used for",
+    "sender": "HSBC",
+    "body": "Your credit card ending in 4321 was used for a purchase of EGP 899.00 at AMAZON EG on 01/11/2026. Available limit EGP 20,101.00",
+    "expect": { "status": "parsed", "kind": "purchase", "amountCents": 89900, "merchant": "AMAZON EG", "card": "4321" }
+  },
+  {
+    "name": "Purchase in USD",
+    "sender": "FABMISR",
+    "body": "Purchase of USD 9.99 at NETFLIX.COM with your card **7852 on 05/11/26. Available limit is EGP 28387.",
+    "expect": { "status": "parsed", "kind": "purchase", "amountCents": 999, "currency": "USD", "merchant": "NETFLIX.COM", "card": "7852" }
+  },
+  {
+    "name": "ATM withdrawal English",
+    "sender": "QNB EGYPT",
+    "body": "Cash withdrawal of EGP 1,000.00 from your card **1234 at QNB ATM SHEIKH ZAYED on 08/11. Available balance EGP 25,402.71",
+    "expect": { "status": "parsed", "kind": "cash", "amountCents": 100000, "merchant": "ATM", "card": "1234" }
+  },
+  {
+    "name": "Purchase at an ATM becomes cash",
+    "sender": "QNB EGYPT",
+    "body": "Your Debit Card **1234 had a Successful transaction of EGP 2000.00 @QNB ATM ZAYED 2,your available bal.EGP24402.71 for lost/stolen card call 19700",
+    "expect": { "status": "parsed", "kind": "cash", "amountCents": 200000, "card": "1234" }
+  },
+  {
+    "name": "ATM withdrawal Arabic",
+    "sender": "NBE",
+    "body": "تم سحب مبلغ 1500.00 جنيه من بطاقتكم المنتهية ب 9876 من ماكينة الصراف الآلي بتاريخ 07/11/2026 الرصيد المتاح 12000.00 جنيه",
+    "expect": { "status": "parsed", "kind": "cash", "amountCents": 150000, "currency": "EGP", "card": "9876" }
+  },
+  {
+    "name": "Arabic purchase with Arabic digits",
+    "sender": "NBE",
+    "body": "تم خصم ٢٥٠٫٠٠ ج.م من حسابكم رقم ***123 لدى كارفور بتاريخ ٠٢/١١/٢٠٢٦",
+    "expect": { "status": "parsed", "kind": "purchase", "amountCents": 25000, "currency": "EGP", "merchant": "كارفور", "card": "123" }
+  },
+  {
+    "name": "Refund English",
+    "sender": "FABMISR",
+    "body": "A refund of EGP 99.99 from NETFLIX.COM has been credited to your card **7852 on 09/11/26.",
+    "expect": { "status": "parsed", "kind": "refund", "amountCents": 9999, "merchant": "NETFLIX.COM", "card": "7852" }
+  },
+  {
+    "name": "Refund Arabic",
+    "sender": "CIB",
+    "body": "تم استرداد مبلغ EGP 120.00 من TALABAT إلى بطاقتك المنتهية بـ **7572 في 06/11/26",
+    "expect": { "status": "parsed", "kind": "refund", "amountCents": 12000, "merchant": "TALABAT", "card": "7572" }
+  },
+  {
+    "name": "InstaPay sent Arabic",
+    "sender": "InstaPay",
+    "body": "تم تحويل مبلغ 500.00 جنيه إلى ahmed.k@instapay بنجاح. رقم العملية 123456789",
+    "expect": { "status": "parsed", "kind": "transfer_out", "amountCents": 50000, "merchant": "ahmed.k@instapay" }
+  },
+  {
+    "name": "InstaPay received English",
+    "sender": "InstaPay",
+    "body": "You have received EGP 300.00 from Mona Ali via InstaPay. Ref 98765.",
+    "expect": { "status": "parsed", "kind": "transfer_in", "amountCents": 30000, "merchant": "Mona Ali" }
+  },
+  {
+    "name": "Transfer to your account Arabic",
+    "sender": "Banque Misr",
+    "body": "تم تحويل مبلغ 2,000.00 جنيه إلى حسابك من OMAR HASSAN يوم 04/11",
+    "expect": { "status": "parsed", "kind": "transfer_in", "amountCents": 200000, "merchant": "OMAR HASSAN" }
+  },
+  {
+    "name": "Salary credited",
+    "sender": "QNB EGYPT",
+    "body": "Your account 7141 has been credited with EGP 35,000.00 on 01/11. Available balance EGP 61,402.71",
+    "expect": { "status": "parsed", "kind": "transfer_in", "amountCents": 3500000, "card": "7141" }
+  },
+  {
+    "name": "Wallet payment amount first",
+    "sender": "VF-Cash",
+    "body": "EGP 45.00 was paid to Uber from your Vodafone Cash wallet. Balance EGP 120.00",
+    "expect": { "status": "parsed", "kind": "purchase", "amountCents": 4500, "merchant": "Uber" }
+  },
+  {
+    "name": "OTP that mentions an amount is skipped",
+    "sender": "CIB",
+    "body": "Your OTP for the transaction of EGP 300.00 at AMAZON EG is 482913. Do not share it with anyone.",
+    "expect": { "status": "skipped" }
+  },
+  {
+    "name": "Arabic OTP is skipped",
+    "sender": "NBE",
+    "body": "رمز التحقق الخاص بك هو 554433 لعملية شراء بمبلغ 300 جنيه. لا تشاركه مع أحد",
+    "expect": { "status": "skipped" }
+  },
+  {
+    "name": "Declined transaction is skipped",
+    "sender": "FABMISR",
+    "body": "Your transaction of EGP 5,000.00 at NOON.COM was declined due to insufficient funds.",
+    "expect": { "status": "skipped" }
+  },
+  {
+    "name": "Unknown bank format falls back to generic",
+    "sender": "AAIB",
+    "body": "Dear customer, POS EGP 75.50 @ COSTA COFFEE. Card 5566. Avl Bal EGP 3,210.00",
+    "expect": { "status": "parsed", "kind": "purchase", "amountCents": 7550, "merchant": "COSTA COFFEE", "card": "5566" }
+  },
+  {
+    "name": "Marketing message fails",
+    "sender": "QNB EGYPT",
+    "body": "Enjoy 20% cashback on all purchases at selected restaurants this weekend with your QNB card. T&Cs apply.",
+    "expect": { "status": "failed" }
+  }
+]

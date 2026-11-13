@@ -1,0 +1,79 @@
+{
+  "version": 1,
+  "notes": "Tokens like {MONEY} are expanded before compiling. Order matters: skip rules run first, then templates top to bottom, then the generic fallback. Every regex is compiled case-insensitive and unicode. Add a fixture in test/fixtures/sms_samples.json for every new pattern.",
+  "tokens": {
+    "CUR": "(?:EGP|E\\.G\\.P\\.?|L\\.E\\.?|(?<![A-Za-z])LE(?![A-Za-z])|USD|US\\$|EUR|GBP|SAR|AED|KWD|QAR|\\$|€|£|ج\\.م\\.?|جنيه(?:ا|ات)?(?: مصري)?|جم(?![\\u0621-\\u064A])|دولار(?: أمريكي)?|يورو|ريال(?: سعودي)?|درهم(?: إماراتي)?)",
+    "NUM": "(?:\\d{1,3}(?:,\\d{3})+|\\d+)(?:\\.\\d{1,3})?",
+    "MONEY": "(?<money>{CUR} ?\\.? ?{NUM}|{NUM} ?{CUR})",
+    "END": "(?=\\s+on\\s+\\d|\\s+on\\s*$|\\s+(?:dated?|بتاريخ|يوم|في\\s+\\d|بنجاح|successfully|via|using|with ref|ref)|\\s*[,،]|\\.\\s|\\.?$|\\s+(?:avail|avl|your|bal|الرصيد|الحد|رصيد|المتاح)|\\s+(?:with|has been|was|is|from|to your|to card|إلى|الى|على)(?=\\s|$)|\\s+من (?:بطاق|حساب|محفظ)|\\s+-\\s)",
+    "MERCHANT": "(?<merchant>\\S.{0,60}?){END}"
+  },
+  "bankSenders": [
+    "qnb", "cib", "fab", "nbe", "ahly", "banquemisr", "banque misr", "misr", "hsbc", "aaib",
+    "adib", "alex", "bdc", "banque du caire", "enbd", "emirates", "mashreq", "agricole",
+    "faisal", "aub", "saib", "abk", "hdb", "nbk", "attijari", "bank", "instapay", "vf-cash",
+    "vodafone cash", "vfcash", "etisalat cash", "e& cash", "orange cash", "wepay", "we pay",
+    "fawry", "valu", "telda", "halan", "sahl", "khazna", "paymob", "meeza", "mid bank", "suez"
+  ],
+  "skip": [
+    {
+      "id": "otp",
+      "regex": "\\b(?:otp|one[ -]time (?:password|pin|code)|verification code|passcode|activation code|security code)\\b|(?:رمز|كود) (?:التحقق|التفعيل|التأكيد|المرور)|كلمة (?:المرور|السر) (?:المؤقتة|لمرة)"
+    },
+    {
+      "id": "declined",
+      "regex": "\\b(?:declined|rejected|unsuccessful|not successful|was not completed|could not be completed|insufficient (?:funds|balance))\\b|مرفوض|تم رفض|لم تتم|غير ناجح|رصيد غير كا"
+    }
+  ],
+  "templates": [
+    { "id": "refund_of", "kind": "refund", "regex": "\\brefund(?:ed)?(?: of| for| amount(?: of)?)? {MONEY}(?: .*?\\b(?:from|at|by) {MERCHANT})?" },
+    { "id": "refund_amount_first", "kind": "refund", "regex": "{MONEY} (?:has been |was |is )?(?:refunded|reversed)(?: .*?\\b(?:from|at|by) {MERCHANT})?" },
+    { "id": "reversal", "kind": "refund", "regex": "\\b(?:reversal|reversed transaction|cancelled transaction)(?: of| for)? {MONEY}(?: .*?\\b(?:at|from) {MERCHANT})?" },
+    { "id": "refund_ar", "kind": "refund", "regex": "(?:تم (?:رد|استرداد|إسترداد|استرجاع|عكس)|استرداد|إسترداد|مرتجع)(?: مبلغ| قيمة| بمبلغ)? {MONEY}(?: .*?(?:من|عند|لدى) {MERCHANT})?" },
+
+    { "id": "transfer_received", "kind": "transfer_in", "regex": "\\btransfer received (?:with amount of|of|for) {MONEY}(?: .*?\\bfrom {MERCHANT})?" },
+    { "id": "received_money", "kind": "transfer_in", "regex": "\\b(?:you(?: have)? )?received {MONEY}(?: .*?\\bfrom {MERCHANT})?" },
+    { "id": "credited_with", "kind": "transfer_in", "regex": "\\b(?:was|has been|is|been) credited (?:with|by|for) {MONEY}(?: .*?\\bfrom {MERCHANT})?" },
+    { "id": "amount_credited", "kind": "transfer_in", "regex": "{MONEY} (?:has been |was |is )?(?:credited|deposited|added|received)(?: .*?\\bfrom {MERCHANT})?" },
+    { "id": "incoming_transfer", "kind": "transfer_in", "regex": "\\b(?:incoming transfer|deposit|salary)(?: of| amount(?: of)?)? {MONEY}(?: .*?\\bfrom {MERCHANT})?" },
+    { "id": "transfer_to_you_ar", "kind": "transfer_in", "regex": "تم (?:تحويل|إضافة|اضافة|إيداع|ايداع) (?:مبلغ |بمبلغ )?{MONEY} (?:(?:إلى|الى) |ل)(?:حسابك|حسابكم|بطاقتك|محفظتك)(?: .*?من {MERCHANT})?" },
+    { "id": "deposit_ar", "kind": "transfer_in", "regex": "(?:تم )?(?:إيداع|ايداع|استلام|إستلام|استقبال|تحويل وارد|حوالة واردة)(?: مبلغ| بمبلغ)? {MONEY}(?: .*?من {MERCHANT})?" },
+    { "id": "received_ar", "kind": "transfer_in", "regex": "(?:استلمت|وصلك|وصلتك|استقبلت)(?: مبلغ)? {MONEY}(?: .*?من {MERCHANT})?" },
+
+    { "id": "cash_withdrawal", "kind": "cash", "merchant": "ATM", "regex": "\\b(?:cash withdrawal|atm withdrawal|withdrawal)(?: transaction)?(?: of| for| amount(?: of)?)? {MONEY}" },
+    { "id": "amount_withdrawn", "kind": "cash", "merchant": "ATM", "regex": "{MONEY} (?:has been |was |is )?withdrawn" },
+    { "id": "withdrew", "kind": "cash", "merchant": "ATM", "regex": "\\bwithdrew {MONEY}" },
+    { "id": "cash_ar", "kind": "cash", "merchant": "ATM", "regex": "(?:عملية )?سحب(?: نقدي| نقدى)?(?: مبلغ| بمبلغ| بقيمة)? {MONEY}" },
+
+    { "id": "transfer_sent", "kind": "transfer_out", "regex": "\\btransfer sent (?:with amount of|of|for) {MONEY}(?: .*?\\bto {MERCHANT})?" },
+    { "id": "you_sent", "kind": "transfer_out", "regex": "\\b(?:you(?: have)? )?(?:sent|transferred) {MONEY} to {MERCHANT}" },
+    { "id": "transfer_of_to", "kind": "transfer_out", "regex": "\\btransfer(?:red)?(?: of)? {MONEY} (?:has been |was )?(?:sent |transferred |made )?to {MERCHANT}" },
+    { "id": "amount_sent", "kind": "transfer_out", "regex": "{MONEY} (?:has been |was )?(?:sent|transferred) to {MERCHANT}" },
+    { "id": "transfer_ar", "kind": "transfer_out", "regex": "(?:تم )?(?:تحويل|ارسال|إرسال)(?: مبلغ| بمبلغ)? {MONEY}(?: .*?(?:إلى|الى) {MERCHANT})?" },
+
+    { "id": "transaction_at", "kind": "purchase", "regex": "\\btransaction of {MONEY} ?(?:@|at) ?{MERCHANT}" },
+    { "id": "debited_at", "kind": "purchase", "regex": "\\b(?:debited|charged|deducted|billed) (?:with|for|by|of) {MONEY} (?:at|@|in|to|from|for) ?{MERCHANT}" },
+    { "id": "purchase_at", "kind": "purchase", "regex": "\\b(?:purchase|payment|pos transaction|online transaction|e-?commerce transaction|transaction|spent)(?: of| for| with| amount(?: of)?)? {MONEY} (?:at|@|on|in|to|from|for) ?{MERCHANT}" },
+    { "id": "used_at", "kind": "purchase", "regex": "\\bused (?:for|in|to pay)(?: a)?(?: purchase| transaction| payment)?(?: of)? {MONEY} (?:at|@) ?{MERCHANT}" },
+    { "id": "amount_spent_at", "kind": "purchase", "regex": "{MONEY} (?:was |has been )?(?:spent|paid|debited|charged|deducted)(?: from your [a-z ]+?)? (?:at|@|to) ?{MERCHANT}" },
+    { "id": "you_paid", "kind": "purchase", "regex": "\\byou(?: have)? (?:paid|spent) {MONEY} (?:at|to|for) {MERCHANT}" },
+    { "id": "debited_no_merchant", "kind": "purchase", "regex": "\\b(?:debited|charged|deducted|billed) (?:with|for|by|of) {MONEY}" },
+    { "id": "deducted_ar", "kind": "purchase", "regex": "تم (?:خصم|سداد|دفع|شراء)(?: مبلغ| بمبلغ| قيمة)? {MONEY}(?: .*?(?:عند|لدى|في متجر|لصالح|إلى|الى) {MERCHANT})?" },
+    { "id": "purchase_ar", "kind": "purchase", "regex": "(?:عملية )?(?:شراء|دفع)(?: بمبلغ| بقيمة| مبلغ)? {MONEY}(?: .*?(?:من|عند|لدى|في) {MERCHANT})?" },
+    { "id": "deduction_ar", "kind": "purchase", "regex": "خصم(?: مبلغ)? {MONEY}(?: .*?(?:عند|لدى) {MERCHANT})?" }
+  ],
+  "generic": {
+    "debitWords": "\\b(?:debit(?:ed)?|charged|deducted|purchase|paid|payment|spent|pos)\\b|خصم|سداد|دفع|شراء|مدين",
+    "creditWords": "\\b(?:credit(?:ed)?|received|deposit(?:ed)?|salary)\\b|إيداع|ايداع|استلام|دائن|وارد",
+    "balanceBefore": "(?:bal(?:ance)?|limit|avail(?:able)?|avl|الرصيد|رصيد|الحد|المتاح)[^\\d]{0,25}$",
+    "merchant": " (?:at|@|عند|لدى) ?{MERCHANT}"
+  },
+  "atmMerchant": "\\batm\\b|ماكينة|صراف",
+  "card": [
+    "(?:ending(?: with| in)?|ends with|end(?:ing)? no\\.?) ?[#*x ]*(?<card>\\d{3,4})\\b",
+    "\\*+ ?(?<card>\\d{3,4})\\b",
+    "(?:المنتهية|المنتهي|تنتهي) ?(?:بـ|ب|بالرقم|برقم)? ?\\*{0,} ?(?<card>\\d{3,4})\\b",
+    "\\b(?:card|account|acc|a/c)(?: no\\.?)? ?(?<card>\\d{4})\\b",
+    "\\b(?:on|from|to) (?<card>\\d{4})\\b"
+  ]
+}

@@ -1,0 +1,28 @@
+# Flutter / Dart
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+build/
+.metadata
+pubspec.lock
+
+# Generated in CI by `flutter create`, customized by ci/apply_android_overlay.py
+android/
+ios/
+web/
+linux/
+macos/
+windows/
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# CI output
+build.log
+issue.md
+masareef.apk

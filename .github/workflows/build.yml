@@ -1,0 +1,119 @@
+name: Build APK
+
+# Every push to main checks the code and publishes a signed APK under
+# Releases. On your phone: Releases -> latest -> masareef.apk.
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Get packages
+        run: flutter pub get 2>&1 | tee -a build.log
+
+      # Formatting is a rule, not a suggestion. The diff goes in the log so a
+      # failed build says exactly what to change.
+      - name: Check formatting
+        run: |
+          dart format lib test > /dev/null
+          if ! git diff --quiet -- lib test; then
+            echo "Files are not formatted. Run: dart format lib test" | tee -a build.log
+            git diff -- lib test | tee -a build.log
+            exit 1
+          fi
+
+      - name: Analyze (strict)
+        run: flutter analyze --fatal-infos --fatal-warnings 2>&1 | tee -a build.log
+
+      - name: Test
+        run: flutter test 2>&1 | tee -a build.log
+
+      # android/ is generated, not committed, so it always matches the
+      # installed Flutter. The overlay adds the SMS reader, icon and name.
+      - name: Generate Android project
+        run: |
+          flutter create . --project-name masareef --org app --platforms android 2>&1 | tee -a build.log
+          rm -f test/widget_test.dart
+          python3 ci/apply_android_overlay.py 2>&1 | tee -a build.log
+
+      # Same key every build, so each APK installs over the last one and
+      # keeps your data. The version code also stays 1.
+      - name: Use the stable signing key
+        run: |
+          mkdir -p ~/.android
+          cp ci/signing.keystore ~/.android/debug.keystore
+
+      - name: Build APK
+        run: |
+          flutter build apk --release --build-number=1 \
+            --build-name=1.0.${{ github.run_number }} 2>&1 | tee -a build.log
+          cp build/app/outputs/flutter-apk/app-release.apk masareef.apk
+
+      - name: Verify signing key
+        run: |
+          apksigner=$(ls -d "$ANDROID_HOME"/build-tools/*/ | sort -V | tail -1)apksigner
+          actual=$("$apksigner" verify --print-certs masareef.apk \
+            | grep -m1 'SHA-256 digest' | awk '{print $NF}')
+          expected=$(cat ci/signing-cert-sha256.txt)
+          echo "signed with $actual" | tee -a build.log
+          if [ "$actual" != "$expected" ]; then
+            echo "Wrong signing key. Installing this APK would fail or wipe data." | tee -a build.log
+            exit 1
+          fi
+
+      - name: Publish release
+        if: github.event_name != 'pull_request'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: build-${{ github.run_number }}
+          name: Masareef 1.0.${{ github.run_number }}
+          body: |
+            Install: download masareef.apk on your phone and open it.
+            It installs over the previous build and keeps your data.
+            Commit: ${{ github.sha }}
+          files: masareef.apk
+          make_latest: true
+
+      # Makes failures readable without signing in: the log lands in an issue.
+      - name: Report failure
+        if: failure() && github.event_name != 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          touch build.log
+          {
+            echo "Build ${{ github.run_number }} failed on ${{ github.sha }}."
+            echo
+            echo '```'
+            tail -c 60000 build.log
+            echo '```'
+          } > issue.md
+          gh issue create --title "Build ${{ github.run_number }} failed" --body-file issue.md

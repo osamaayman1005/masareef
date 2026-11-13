@@ -1,0 +1,67 @@
+# Strict rules. CI runs `flutter analyze --fatal-infos --fatal-warnings`,
+# so every item below blocks a build. Do not disable a rule to make CI pass;
+# fix the code. A rule may only be removed with a reason written here.
+include: package:flutter_lints/flutter.yaml
+
+analyzer:
+  language:
+    strict-casts: true
+    strict-inference: true
+    strict-raw-types: true
+  errors:
+    invalid_annotation_target: ignore
+    missing_required_param: error
+    missing_return: error
+    dead_code: error
+    unused_import: error
+    unused_local_variable: error
+    unused_element: error
+  exclude:
+    - build/**
+    - android/**
+
+linter:
+  rules:
+    # Correctness
+    - always_use_package_imports
+    - avoid_catches_without_on_clauses
+    - avoid_dynamic_calls
+    - avoid_slow_async_io
+    - avoid_type_to_string
+    - cancel_subscriptions
+    - close_sinks
+    - literal_only_boolean_expressions
+    - no_adjacent_strings_in_list
+    - only_throw_errors
+    - test_types_in_equals
+    - throw_in_finally
+    - unawaited_futures
+    - unnecessary_statements
+    - use_build_context_synchronously
+    # Clarity
+    - always_declare_return_types
+    - avoid_positional_boolean_parameters
+    - avoid_redundant_argument_values
+    - avoid_returning_null_for_void
+    - avoid_unused_constructor_parameters
+    - directives_ordering
+    - omit_local_variable_types
+    - one_member_abstracts
+    - parameter_assignments
+    - prefer_const_constructors
+    - prefer_const_constructors_in_immutables
+    - prefer_const_declarations
+    - prefer_const_literals_to_create_immutables
+    - prefer_final_fields
+    - prefer_final_in_for_each
+    - prefer_final_locals
+    - prefer_if_elements_to_conditional_expressions
+    - prefer_single_quotes
+    - sort_child_properties_last
+    - sort_constructors_first
+    - type_annotate_public_apis
+    - unnecessary_await_in_return
+    - unnecessary_lambdas
+    - unnecessary_parenthesis
+    - use_named_constants
+    - use_super_parameters
