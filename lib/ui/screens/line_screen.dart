@@ -1,10 +1,10 @@
-import 'package:flutter/material.dart';
 import 'package:masareef/logic/spending.dart';
 import 'package:masareef/ui/app_scope.dart';
 import 'package:masareef/ui/format.dart';
 import 'package:masareef/ui/theme.dart';
 import 'package:masareef/ui/widgets/receipt.dart';
 import 'package:masareef/ui/widgets/transaction_tile.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Every transaction behind one line on the Spending screen.
 class LineScreen extends StatelessWidget {

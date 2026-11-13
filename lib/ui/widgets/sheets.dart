@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
 import 'package:masareef/domain/models.dart';
 import 'package:masareef/domain/money.dart';
 import 'package:masareef/ui/theme.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Bottom sheet listing all categories. Returns the picked id.
 Future<int?> pickCategory(

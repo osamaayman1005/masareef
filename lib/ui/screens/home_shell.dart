@@ -1,9 +1,9 @@
-import 'package:flutter/material.dart';
 import 'package:masareef/ui/app_scope.dart';
 import 'package:masareef/ui/screens/inbox_screen.dart';
 import 'package:masareef/ui/screens/log_screen.dart';
 import 'package:masareef/ui/screens/spending_screen.dart';
 import 'package:masareef/ui/theme.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Three tabs: Spending, Inbox and Log.
 class HomeShell extends StatefulWidget {
@@ -21,11 +21,8 @@ class _HomeShellState extends State<HomeShell> {
   @override
   Widget build(BuildContext context) {
     final inboxCount = AppScope.of(context).inbox.length;
-    final tabs = [
-      'Spending',
-      inboxCount > 0 ? 'Inbox · $inboxCount' : 'Inbox',
-      'Log',
-    ];
+    final inboxLabel = inboxCount > 0 ? 'Inbox · $inboxCount' : 'Inbox';
+    final tabs = ['Spending', inboxLabel, 'Log'];
     return Scaffold(
       body: SafeArea(
         child: IndexedStack(

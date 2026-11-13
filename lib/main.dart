@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:masareef/app.dart';
+import 'package:material_ui/material_ui.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

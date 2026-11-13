@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:masareef/data/database.dart';
 import 'package:masareef/data/ledger_store.dart';
@@ -13,6 +12,7 @@ import 'package:masareef/state/app_controller.dart';
 import 'package:masareef/ui/app_scope.dart';
 import 'package:masareef/ui/screens/home_shell.dart';
 import 'package:masareef/ui/theme.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Wires the layers together. The only file that creates concrete classes.
 Future<AppController> createController() async {

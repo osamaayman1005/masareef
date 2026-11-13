@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
 import 'package:masareef/domain/models.dart';
 import 'package:masareef/domain/money.dart';
 import 'package:masareef/logic/inbox.dart';
@@ -10,6 +9,7 @@ import 'package:masareef/ui/theme.dart';
 import 'package:masareef/ui/widgets/receipt.dart';
 import 'package:masareef/ui/widgets/sheets.dart';
 import 'package:masareef/ui/widgets/unread_message_card.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Things the app could not decide alone. Each answer is remembered.
 class InboxScreen extends StatelessWidget {

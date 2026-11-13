@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart';
 import 'package:masareef/domain/models.dart';
 import 'package:masareef/ui/format.dart';
 import 'package:masareef/ui/screens/transaction_screen.dart';
 import 'package:masareef/ui/theme.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// One row in a list of transactions. Opens the detail screen.
 class TransactionTile extends StatelessWidget {

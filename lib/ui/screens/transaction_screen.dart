@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
 import 'package:masareef/domain/models.dart';
 import 'package:masareef/parser/text_tools.dart';
 import 'package:masareef/state/app_controller.dart';
@@ -10,6 +9,7 @@ import 'package:masareef/ui/theme.dart';
 import 'package:masareef/ui/widgets/receipt.dart';
 import 'package:masareef/ui/widgets/sheets.dart';
 import 'package:masareef/ui/widgets/split_editor.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Details of one transaction: category, splits, and the original SMS.
 class TransactionScreen extends StatelessWidget {
@@ -23,9 +23,9 @@ class TransactionScreen extends StatelessWidget {
     final matches =
         controller.snapshot.transactions.where((tx) => tx.id == transactionId);
     if (matches.isEmpty) {
-      return const Scaffold(
+      return Scaffold(
         appBar: AppBar(),
-        body: Center(child: Text('This entry no longer exists.')),
+        body: const Center(child: Text('This entry no longer exists.')),
       );
     }
     final tx = matches.first;

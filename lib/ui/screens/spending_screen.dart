@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
 import 'package:masareef/domain/models.dart';
 import 'package:masareef/domain/money.dart';
 import 'package:masareef/logic/spending.dart';
@@ -10,6 +9,7 @@ import 'package:masareef/ui/format.dart';
 import 'package:masareef/ui/screens/line_screen.dart';
 import 'package:masareef/ui/theme.dart';
 import 'package:masareef/ui/widgets/receipt.dart';
+import 'package:material_ui/material_ui.dart';
 
 class SpendingScreen extends StatelessWidget {
   const SpendingScreen({required this.onOpenInbox, super.key});

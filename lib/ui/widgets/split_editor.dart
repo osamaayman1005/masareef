@@ -1,11 +1,11 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
 import 'package:masareef/domain/models.dart';
 import 'package:masareef/domain/money.dart';
 import 'package:masareef/ui/app_scope.dart';
 import 'package:masareef/ui/theme.dart';
 import 'package:masareef/ui/widgets/receipt.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Splits a cash withdrawal or sent transfer into categories: all of it in
 /// one tap, or part of it at a time.

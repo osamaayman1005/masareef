@@ -1,12 +1,12 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
 import 'package:masareef/domain/models.dart';
 import 'package:masareef/ui/app_scope.dart';
 import 'package:masareef/ui/format.dart';
 import 'package:masareef/ui/theme.dart';
 import 'package:masareef/ui/widgets/receipt.dart';
 import 'package:masareef/ui/widgets/sheets.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// A bank SMS the parser could not read, with the three ways to resolve it.
 class UnreadMessageCard extends StatelessWidget {

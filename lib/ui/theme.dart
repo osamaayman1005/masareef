@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// The only place colors and text styles are defined. Screens use these
 /// names, never raw hex values.

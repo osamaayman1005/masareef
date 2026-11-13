@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
 import 'package:masareef/domain/money.dart';
 import 'package:masareef/ui/theme.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Paper block with dashed top and bottom edges, like a printed receipt.
 class ReceiptPanel extends StatelessWidget {
