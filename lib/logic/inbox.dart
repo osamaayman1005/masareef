@@ -56,9 +56,9 @@ List<InboxItem> buildInbox(LedgerSnapshot snapshot) {
     if (tx.egpCents == null) {
       foreign.add(ForeignCharge(tx));
     }
-    final needsCategory = (tx.kind == TxKind.purchase ||
-            tx.kind == TxKind.refund) &&
-        snapshot.effectiveCategory(tx) == null;
+    final needsCategory =
+        (tx.kind == TxKind.purchase || tx.kind == TxKind.refund) &&
+            snapshot.effectiveCategory(tx) == null;
     if (!needsCategory) {
       continue;
     }
@@ -75,8 +75,7 @@ List<InboxItem> buildInbox(LedgerSnapshot snapshot) {
         merchantKey: entry.key,
         name: displayMerchant(entry.value.first.merchant ?? entry.key),
         count: entry.value.length,
-        totalCents:
-            entry.value.fold(0, (sum, tx) => sum + (tx.egpCents ?? 0)),
+        totalCents: entry.value.fold(0, (sum, tx) => sum + (tx.egpCents ?? 0)),
         latest: entry.value.first,
       ),
   ]..sort((a, b) => b.count.compareTo(a.count));

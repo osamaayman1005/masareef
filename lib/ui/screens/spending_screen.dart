@@ -69,7 +69,8 @@ class SpendingScreen extends StatelessWidget {
               if (summary.lines.isEmpty)
                 const Padding(
                   padding: EdgeInsets.symmetric(vertical: 12),
-                  child: Text('Nothing spent in these dates.', style: AppText.note),
+                  child: Text('Nothing spent in these dates.',
+                      style: AppText.note),
                 ),
               for (final line in summary.lines)
                 LeaderRow(
@@ -191,7 +192,8 @@ class _RangeBar extends StatelessWidget {
           for (final entry in _labels.entries)
             Expanded(
               child: Material(
-                color: entry.key == selected ? AppColors.ink : Colors.transparent,
+                color:
+                    entry.key == selected ? AppColors.ink : Colors.transparent,
                 child: InkWell(
                   onTap: () => entry.key == RangePreset.custom
                       ? unawaited(_pickCustom(context))

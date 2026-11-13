@@ -2,7 +2,8 @@ import 'package:flutter/services.dart';
 
 /// One SMS as read from the phone inbox.
 class RawSms {
-  const RawSms({required this.sender, required this.body, required this.timestamp});
+  const RawSms(
+      {required this.sender, required this.body, required this.timestamp});
 
   final String sender;
   final String body;

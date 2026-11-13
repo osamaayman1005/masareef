@@ -35,7 +35,8 @@ class AppController extends ChangeNotifier {
   DayRange get range {
     final today = DateTime.now();
     return switch (_preset) {
-      RangePreset.thisMonth => DayRange(DateTime(today.year, today.month), today),
+      RangePreset.thisMonth =>
+        DayRange(DateTime(today.year, today.month), today),
       RangePreset.last7Days =>
         DayRange(today.subtract(const Duration(days: 6)), today),
       RangePreset.all => DayRange(_earliest(), today),
@@ -97,7 +98,8 @@ class AppController extends ChangeNotifier {
   Future<void> categorizeTransaction(int id, int? categoryId) =>
       _write(() => store.setTransactionCategory(id, categoryId));
 
-  Future<void> addCategory(String name) => _write(() => store.addCategory(name));
+  Future<void> addCategory(String name) =>
+      _write(() => store.addCategory(name));
 
   Future<void> renameCategory(int id, String name) =>
       _write(() => store.renameCategory(id, name));
@@ -106,7 +108,8 @@ class AppController extends ChangeNotifier {
 
   /// Assigns [cents] of a cash withdrawal or sent transfer. Returns an error
   /// message, or null on success.
-  Future<String?> assign(LedgerTransaction tx, int categoryId, int cents) async {
+  Future<String?> assign(
+      LedgerTransaction tx, int categoryId, int cents) async {
     final left = (tx.egpCents ?? 0) - _snapshot.assignedCents(tx.id);
     if (cents <= 0) {
       return 'Enter an amount above 0.';
@@ -118,7 +121,8 @@ class AppController extends ChangeNotifier {
     return null;
   }
 
-  Future<void> removeSplit(int splitId) => _write(() => store.deleteSplit(splitId));
+  Future<void> removeSplit(int splitId) =>
+      _write(() => store.deleteSplit(splitId));
 
   Future<void> confirmEgp(int transactionId, int cents) =>
       _write(() => store.setEgpAmount(transactionId, cents));
@@ -136,7 +140,8 @@ class AppController extends ChangeNotifier {
         );
         for (final other in _snapshot.messages) {
           final hidden = other.status == MessageStatus.failed &&
-              matchingIgnoreRule([_rule(id, message)], other.sender, other.body) !=
+              matchingIgnoreRule(
+                      [_rule(id, message)], other.sender, other.body) !=
                   null;
           if (hidden) {
             await store.updateMessage(

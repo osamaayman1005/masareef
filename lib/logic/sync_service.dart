@@ -5,7 +5,8 @@ import 'package:masareef/parser/sms_parser.dart';
 import 'package:masareef/parser/text_tools.dart';
 
 class SyncReport {
-  const SyncReport({required this.read, required this.added, required this.failed});
+  const SyncReport(
+      {required this.read, required this.added, required this.failed});
 
   final int read;
   final int added;
@@ -15,7 +16,8 @@ class SyncReport {
 /// Moves SMS from the phone into the ledger. Safe to run any number of
 /// times: every SMS has a stable key and is stored at most once.
 class SyncService {
-  SyncService({required this.store, required this.source, required this.parser});
+  SyncService(
+      {required this.store, required this.source, required this.parser});
 
   final LedgerStore store;
   final SmsSource source;
@@ -73,7 +75,8 @@ class SyncService {
           final status =
               rule == null ? MessageStatus.failed : MessageStatus.ignored;
           await store.saveMessage(
-            _message(key, sms, status, rule == null ? null : 'ignore:${rule.id}'),
+            _message(
+                key, sms, status, rule == null ? null : 'ignore:${rule.id}'),
           );
           if (rule == null) {
             failed++;
@@ -102,7 +105,8 @@ class SyncService {
           message.key,
           MessageStatus.parsed,
           rule: outcome.ruleId,
-          draft: draftFrom(outcome, message.key, message.sender, message.timestamp),
+          draft: draftFrom(
+              outcome, message.key, message.sender, message.timestamp),
         );
         recovered++;
       }
@@ -141,7 +145,8 @@ TransactionDraft draftFrom(
       amountCents: parsed.amountCents,
       currency: parsed.currency,
       merchant: parsed.merchant,
-      merchantKey: parsed.kind.isAssignable ? '' : merchantKeyOf(parsed.merchant),
+      merchantKey:
+          parsed.kind.isAssignable ? '' : merchantKeyOf(parsed.merchant),
       source: sender,
       card: parsed.card,
     );

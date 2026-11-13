@@ -34,7 +34,8 @@ class PatternSet {
       bankSenders: _list(json['bankSenders']).cast<String>(),
       skipRules: [
         for (final rule in _list(json['skip']).map(_map))
-          NamedPattern(id: rule['id']! as String, regex: compile(rule['regex'])),
+          NamedPattern(
+              id: rule['id']! as String, regex: compile(rule['regex'])),
       ],
       templates: [
         for (final template in _list(json['templates']).map(_map))
@@ -81,7 +82,9 @@ class PatternSet {
 
   static String _expand(String source, Map<String, String> tokens) {
     var expanded = source;
-    for (var depth = 0; depth < 10 && _placeholder.hasMatch(expanded); depth++) {
+    for (var depth = 0;
+        depth < 10 && _placeholder.hasMatch(expanded);
+        depth++) {
       expanded = expanded.replaceAllMapped(
         _placeholder,
         (match) => tokens[match.group(1)] ?? match.group(0)!,

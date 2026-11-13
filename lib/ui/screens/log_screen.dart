@@ -90,13 +90,13 @@ class LogScreen extends StatelessWidget {
         const SizedBox(height: 20),
         const SectionLabel('Remembered merchants'),
         const SizedBox(height: 8),
-        if (merchants.isEmpty)
-          const Text('None yet.', style: AppText.note),
+        if (merchants.isEmpty) const Text('None yet.', style: AppText.note),
         for (final entry in merchants)
           ListTile(
             contentPadding: EdgeInsets.zero,
             title: Text(displayMerchant(entry.key), style: AppText.strong),
-            trailing: Text(snapshot.categoryName(entry.value), style: AppText.body),
+            trailing:
+                Text(snapshot.categoryName(entry.value), style: AppText.body),
             onTap: () => unawaited(_changeMerchant(context, entry.key)),
           ),
         const SizedBox(height: 20),
@@ -161,7 +161,8 @@ class LogScreen extends StatelessWidget {
 
   Future<void> _addCategory(BuildContext context) async {
     final controller = AppScope.read(context);
-    final name = await askText(context, title: 'New category', confirmLabel: 'Add');
+    final name =
+        await askText(context, title: 'New category', confirmLabel: 'Add');
     if (name != null) {
       await controller.addCategory(name);
     }

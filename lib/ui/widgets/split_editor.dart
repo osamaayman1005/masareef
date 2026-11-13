@@ -106,7 +106,8 @@ class _SplitEditorState extends State<SplitEditor> {
                       onPressed: () => unawaited(
                         AppScope.read(context).removeSplit(split.id),
                       ),
-                      style: TextButton.styleFrom(foregroundColor: AppColors.danger),
+                      style: TextButton.styleFrom(
+                          foregroundColor: AppColors.danger),
                       child: const Text('Undo'),
                     ),
                   ],
@@ -116,7 +117,8 @@ class _SplitEditorState extends State<SplitEditor> {
         ),
         const SizedBox(height: 16),
         if (left <= 0)
-          const Callout(text: 'All of it is assigned. Undo a line to change it.')
+          const Callout(
+              text: 'All of it is assigned. Undo a line to change it.')
         else ...[
           const Text('Where did it go?', style: AppText.strong),
           const SizedBox(height: 8),

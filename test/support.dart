@@ -21,9 +21,8 @@ class FakeSmsSource implements SmsSource {
   Future<bool> ensurePermission() async => true;
 
   @override
-  Future<List<RawSms>> readInbox({required DateTime since}) async => messages
-      .where((sms) => !sms.timestamp.isBefore(since))
-      .toList();
+  Future<List<RawSms>> readInbox({required DateTime since}) async =>
+      messages.where((sms) => !sms.timestamp.isBefore(since)).toList();
 }
 
 LedgerTransaction tx({

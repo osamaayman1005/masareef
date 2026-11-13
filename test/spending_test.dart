@@ -9,7 +9,8 @@ void main() {
   final day = DateTime(2026, 11, 10, 12);
   final november = DayRange(DateTime(2026, 11), DateTime(2026, 11, 30));
   const groceries = ExpenseCategory(id: 1, name: 'Groceries', sortOrder: 0);
-  const installments = ExpenseCategory(id: 2, name: 'Installments', sortOrder: 1);
+  const installments =
+      ExpenseCategory(id: 2, name: 'Installments', sortOrder: 1);
 
   LedgerSnapshot snapshot({
     List<LedgerTransaction> transactions = const [],
@@ -29,8 +30,18 @@ void main() {
     final summary = summarize(
       snapshot(
         transactions: [
-          tx(id: 1, kind: TxKind.purchase, cents: 2000, at: day, merchantKey: 'seoudi'),
-          tx(id: 2, kind: TxKind.purchase, cents: 500, at: day, merchantKey: 'seoudi'),
+          tx(
+              id: 1,
+              kind: TxKind.purchase,
+              cents: 2000,
+              at: day,
+              merchantKey: 'seoudi'),
+          tx(
+              id: 2,
+              kind: TxKind.purchase,
+              cents: 500,
+              at: day,
+              merchantKey: 'seoudi'),
         ],
         rules: {'seoudi': 1},
       ),
@@ -45,7 +56,12 @@ void main() {
     final summary = summarize(
       snapshot(
         transactions: [
-          tx(id: 1, kind: TxKind.purchase, cents: 1000, at: day, merchantKey: 'a'),
+          tx(
+              id: 1,
+              kind: TxKind.purchase,
+              cents: 1000,
+              at: day,
+              merchantKey: 'a'),
           tx(id: 2, kind: TxKind.refund, cents: 400, at: day, merchantKey: 'a'),
         ],
         rules: {'a': 1},
@@ -64,16 +80,20 @@ void main() {
     final after = summarize(
       snapshot(
         transactions: [cash],
-        splits: const [Split(id: 1, transactionId: 1, categoryId: 1, amountCents: 50000)],
+        splits: const [
+          Split(id: 1, transactionId: 1, categoryId: 1, amountCents: 50000)
+        ],
       ),
       november,
     );
-    expect(after.totalCents, 100000, reason: 'splitting never changes the total');
+    expect(after.totalCents, 100000,
+        reason: 'splitting never changes the total');
     expect(after.lines.map((line) => line.cents), [50000, 50000]);
   });
 
   test('a whole sent transfer can go to one category', () {
-    final transfer = tx(id: 1, kind: TxKind.transferOut, cents: 5250000, at: day);
+    final transfer =
+        tx(id: 1, kind: TxKind.transferOut, cents: 5250000, at: day);
     final summary = summarize(
       snapshot(
         transactions: [transfer],
@@ -93,7 +113,11 @@ void main() {
         transactions: [
           tx(id: 1, kind: TxKind.transferIn, cents: 2670000, at: day),
           tx(id: 2, kind: TxKind.purchase, cents: 900, at: day, excluded: true),
-          tx(id: 3, kind: TxKind.purchase, cents: 700, at: DateTime(2026, 10, 5)),
+          tx(
+              id: 3,
+              kind: TxKind.purchase,
+              cents: 700,
+              at: DateTime(2026, 10, 5)),
         ],
       ),
       november,
@@ -103,7 +127,8 @@ void main() {
   });
 
   test('foreign charges wait in the Inbox and stay out of totals', () {
-    final usd = tx(id: 1, kind: TxKind.purchase, cents: 999, at: day, currency: 'USD');
+    final usd =
+        tx(id: 1, kind: TxKind.purchase, cents: 999, at: day, currency: 'USD');
     final data = snapshot(transactions: [usd]);
     expect(summarize(data, november).totalCents, 0);
     expect(buildInbox(data).whereType<ForeignCharge>(), hasLength(1));
@@ -113,8 +138,18 @@ void main() {
     final inbox = buildInbox(
       snapshot(
         transactions: [
-          tx(id: 1, kind: TxKind.purchase, cents: 5079, at: day, merchantKey: 'sahl'),
-          tx(id: 2, kind: TxKind.purchase, cents: 100, at: day, merchantKey: 'sahl'),
+          tx(
+              id: 1,
+              kind: TxKind.purchase,
+              cents: 5079,
+              at: day,
+              merchantKey: 'sahl'),
+          tx(
+              id: 2,
+              kind: TxKind.purchase,
+              cents: 100,
+              at: day,
+              merchantKey: 'sahl'),
         ],
       ),
     );

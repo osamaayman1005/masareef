@@ -44,7 +44,8 @@ enum MessageStatus {
 }
 
 class ExpenseCategory {
-  const ExpenseCategory({required this.id, required this.name, required this.sortOrder});
+  const ExpenseCategory(
+      {required this.id, required this.name, required this.sortOrder});
 
   final int id;
   final String name;
@@ -245,6 +246,6 @@ class LedgerSnapshot {
   List<Split> splitsOf(int transactionId) =>
       splits.where((split) => split.transactionId == transactionId).toList();
 
-  int assignedCents(int transactionId) => splitsOf(transactionId)
-      .fold(0, (sum, split) => sum + split.amountCents);
+  int assignedCents(int transactionId) =>
+      splitsOf(transactionId).fold(0, (sum, split) => sum + split.amountCents);
 }

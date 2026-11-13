@@ -80,9 +80,11 @@ const List<String> starterCategories = [
 
 /// Opens (and creates or upgrades) the app database. Tests pass their own
 /// [factory] and an in-memory [path].
-Future<Database> openAppDatabase({String? path, DatabaseFactory? factory}) async {
+Future<Database> openAppDatabase(
+    {String? path, DatabaseFactory? factory}) async {
   final dbFactory = factory ?? databaseFactory;
-  final file = path ?? p.join(await dbFactory.getDatabasesPath(), 'masareef.db');
+  final file =
+      path ?? p.join(await dbFactory.getDatabasesPath(), 'masareef.db');
   return dbFactory.openDatabase(
     file,
     options: OpenDatabaseOptions(

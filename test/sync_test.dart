@@ -37,7 +37,8 @@ void main() {
   );
   final notice = RawSms(
     sender: 'CIB',
-    body: 'عميل CIB العزيز، سيتم تحديث أسعار العائد اعتبارًا من 10 نوفمبر 2026. '
+    body:
+        'عميل CIB العزيز، سيتم تحديث أسعار العائد اعتبارًا من 10 نوفمبر 2026. '
         'لمعرفة المزيد اضغط هنا https://cib.eg/2azq',
     timestamp: now.subtract(const Duration(hours: 2)),
   );
@@ -56,7 +57,8 @@ void main() {
   test('syncing twice never adds a payment twice', () async {
     final sync = service([purchase, notice, personal]);
     final first = await sync.sync();
-    final second = await sync.sync(since: now.subtract(const Duration(days: 30)));
+    final second =
+        await sync.sync(since: now.subtract(const Duration(days: 30)));
 
     expect(first.added, 1);
     expect(first.failed, 1);
@@ -92,7 +94,8 @@ void main() {
     );
   });
 
-  test('stopping an ignore rule sends its messages back to the Inbox', () async {
+  test('stopping an ignore rule sends its messages back to the Inbox',
+      () async {
     await service([notice]).sync();
     final failed = (await store.load()).messages.single;
     final ruleId = await store.addIgnoreRule(

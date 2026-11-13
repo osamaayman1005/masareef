@@ -68,7 +68,8 @@ class InboxScreen extends StatelessWidget {
                 action: 'Enter EGP amount',
                 onTap: () => unawaited(_confirmEgp(context, transaction)),
               ),
-            UnreadMessage(:final message) => UnreadMessageCard(message: message),
+            UnreadMessage(:final message) =>
+              UnreadMessageCard(message: message),
           },
           const SizedBox(height: 12),
         ],
@@ -92,7 +93,8 @@ class InboxScreen extends StatelessWidget {
     }
   }
 
-  Future<void> _categorizeOne(BuildContext context, LedgerTransaction tx) async {
+  Future<void> _categorizeOne(
+      BuildContext context, LedgerTransaction tx) async {
     final controller = AppScope.read(context);
     final picked = await pickCategory(
       context,

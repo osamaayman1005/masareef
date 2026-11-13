@@ -70,7 +70,8 @@ Future<int?> askAmount(
     );
 
 class _AmountSheet extends StatefulWidget {
-  const _AmountSheet({required this.title, required this.confirmLabel, this.hint});
+  const _AmountSheet(
+      {required this.title, required this.confirmLabel, this.hint});
 
   final String title;
   final String confirmLabel;

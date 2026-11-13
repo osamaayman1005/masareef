@@ -97,7 +97,8 @@ class LeaderRow extends StatelessWidget {
                 Flexible(
                   child: Container(
                     color: highlight ? AppColors.highlight : null,
-                    padding: EdgeInsets.symmetric(horizontal: highlight ? 4 : 0),
+                    padding:
+                        EdgeInsets.symmetric(horizontal: highlight ? 4 : 0),
                     child: Text(label, style: AppText.strong),
                   ),
                 ),
@@ -127,7 +128,8 @@ class _DottedLeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return const Padding(
       padding: EdgeInsets.fromLTRB(8, 0, 8, 5),
-      child: CustomPaint(size: Size(double.infinity, 2), painter: _DotPainter()),
+      child:
+          CustomPaint(size: Size(double.infinity, 2), painter: _DotPainter()),
     );
   }
 }

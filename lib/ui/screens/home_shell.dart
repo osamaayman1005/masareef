@@ -48,14 +48,17 @@ class _HomeShellState extends State<HomeShell> {
                 for (final (index, label) in tabs.indexed)
                   Expanded(
                     child: Material(
-                      color: index == _tab ? AppColors.highlight : AppColors.ink,
+                      color:
+                          index == _tab ? AppColors.highlight : AppColors.ink,
                       child: InkWell(
                         onTap: () => _open(index),
                         child: Center(
                           child: Text(
                             label,
                             style: AppText.strong.copyWith(
-                              color: index == _tab ? AppColors.ink : AppColors.paper,
+                              color: index == _tab
+                                  ? AppColors.ink
+                                  : AppColors.paper,
                             ),
                           ),
                         ),

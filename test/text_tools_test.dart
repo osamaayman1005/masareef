@@ -24,7 +24,8 @@ void main() {
   });
 
   test('merchant keys ignore case and punctuation', () {
-    expect(merchantKeyOf('SEOUDI NEW ZAYED'), merchantKeyOf('Seoudi  new-zayed'));
+    expect(
+        merchantKeyOf('SEOUDI NEW ZAYED'), merchantKeyOf('Seoudi  new-zayed'));
     expect(merchantKeyOf(null), '');
   });
 

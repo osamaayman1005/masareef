@@ -20,8 +20,8 @@ class TransactionScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = AppScope.of(context);
-    final matches = controller.snapshot.transactions
-        .where((tx) => tx.id == transactionId);
+    final matches =
+        controller.snapshot.transactions.where((tx) => tx.id == transactionId);
     if (matches.isEmpty) {
       return const Scaffold(
         appBar: AppBar(),
@@ -122,12 +122,14 @@ class _CategorySection extends StatelessWidget {
           const SizedBox(height: 12),
           if (tx.merchantKey.isNotEmpty)
             FilledButton(
-              onPressed: () => unawaited(_pick(context, controller, allAtMerchant: true)),
+              onPressed: () =>
+                  unawaited(_pick(context, controller, allAtMerchant: true)),
               child: Text('Set for everything at $merchant'),
             ),
           const SizedBox(height: 8),
           OutlinedButton(
-            onPressed: () => unawaited(_pick(context, controller, allAtMerchant: false)),
+            onPressed: () =>
+                unawaited(_pick(context, controller, allAtMerchant: false)),
             child: const Text('Set for this payment only'),
           ),
           if (tx.categoryId != null && tx.merchantKey.isNotEmpty)
@@ -186,7 +188,8 @@ class _OriginalSmsState extends State<_OriginalSms> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     final key = widget.messageKey;
-    _body ??= key == null ? null : AppScope.read(context).store.messageBody(key);
+    _body ??=
+        key == null ? null : AppScope.read(context).store.messageBody(key);
   }
 
   @override

@@ -142,9 +142,9 @@ List<LedgerTransaction> transactionsFor(
                 .any((split) => split.categoryId == line.categoryId)
             : snapshot.effectiveCategory(tx) == line.categoryId &&
                 tx.kind != TxKind.transferIn,
-        LineKind.uncategorized => (tx.kind == TxKind.purchase ||
-                tx.kind == TxKind.refund) &&
-            snapshot.effectiveCategory(tx) == null,
+        LineKind.uncategorized =>
+          (tx.kind == TxKind.purchase || tx.kind == TxKind.refund) &&
+              snapshot.effectiveCategory(tx) == null,
         LineKind.unassignedCash => tx.kind == TxKind.cash &&
             snapshot.assignedCents(tx.id) < (tx.egpCents ?? 0),
         LineKind.unassignedTransfer => tx.kind == TxKind.transferOut &&

@@ -76,16 +76,15 @@ String merchantKeyOf(String? merchant) {
 /// Display form: all-caps or all-lowercase names become Title Case.
 String displayMerchant(String merchant) {
   final hasLetters = RegExp('[A-Za-z]').hasMatch(merchant);
-  final mixed = merchant != merchant.toUpperCase() &&
-      merchant != merchant.toLowerCase();
+  final mixed =
+      merchant != merchant.toUpperCase() && merchant != merchant.toLowerCase();
   if (!hasLetters || mixed) {
     return merchant;
   }
   return merchant
       .toLowerCase()
       .split(' ')
-      .map((word) => word.isEmpty
-          ? word
-          : '${word[0].toUpperCase()}${word.substring(1)}')
+      .map((word) =>
+          word.isEmpty ? word : '${word[0].toUpperCase()}${word.substring(1)}')
       .join(' ');
 }
