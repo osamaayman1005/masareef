@@ -51,7 +51,7 @@ class AppController extends ChangeNotifier {
     final recovered = await syncService.reparseIfParserChanged();
     await _reload();
     if (recovered > 0) {
-      _setStatus('Updated parser read $recovered old messages');
+      _setStatus('App update re-read $recovered old messages');
     }
   }
 

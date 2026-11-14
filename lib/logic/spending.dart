@@ -1,6 +1,12 @@
 import 'package:masareef/domain/models.dart';
 
-enum LineKind { category, uncategorized, unassignedCash, unassignedTransfer }
+enum LineKind {
+  category,
+  uncategorized,
+  unassignedCash,
+  unassignedTransfer,
+  moneyIn,
+}
 
 class SpendingLine {
   const SpendingLine({
@@ -23,6 +29,7 @@ class SpendingSummary {
     required this.totalCents,
     required this.lines,
     required this.incomeCents,
+    required this.incomeCount,
   });
 
   final int totalCents;
@@ -32,6 +39,15 @@ class SpendingSummary {
 
   /// Money received. Never counted as spending.
   final int incomeCents;
+  final int incomeCount;
+
+  /// The money-in total as a line, so it opens like any other.
+  SpendingLine get incomeLine => SpendingLine(
+        kind: LineKind.moneyIn,
+        label: 'Money in',
+        cents: incomeCents,
+        count: incomeCount,
+      );
 }
 
 /// Totals for [range]. Pure function of the snapshot, so it is easy to test
@@ -46,6 +62,7 @@ SpendingSummary summarize(LedgerSnapshot snapshot, DayRange range) {
   var transfers = 0;
   var transferCount = 0;
   var income = 0;
+  var incomeCount = 0;
 
   void addToCategory(int id, int cents) {
     byCategory[id] = (byCategory[id] ?? 0) + cents;
@@ -82,6 +99,7 @@ SpendingSummary summarize(LedgerSnapshot snapshot, DayRange range) {
         }
       case TxKind.transferIn:
         income += egp;
+        incomeCount++;
     }
   }
 
@@ -126,6 +144,7 @@ SpendingSummary summarize(LedgerSnapshot snapshot, DayRange range) {
     totalCents: lines.fold(0, (sum, line) => sum + line.cents),
     lines: lines,
     incomeCents: income,
+    incomeCount: incomeCount,
   );
 }
 
@@ -149,6 +168,7 @@ List<LedgerTransaction> transactionsFor(
             snapshot.assignedCents(tx.id) < (tx.egpCents ?? 0),
         LineKind.unassignedTransfer => tx.kind == TxKind.transferOut &&
             snapshot.assignedCents(tx.id) < (tx.egpCents ?? 0),
+        LineKind.moneyIn => tx.kind == TxKind.transferIn,
       };
 
   return snapshot.transactions

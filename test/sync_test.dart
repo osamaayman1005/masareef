@@ -130,6 +130,39 @@ void main() {
     expect(await service(const []).reparseIfParserChanged(), 0);
   });
 
+  test('an app update fixes a salary first read as money sent', () async {
+    const body = 'عميلنا العزيز لقد تم تحويل مبلغ EGP77,000.00 '
+        'على حسابكم لدينا من جهة العمل';
+    final at = now.subtract(const Duration(days: 3));
+    await store.saveMessage(
+      StoredMessage(
+        key: 'salary',
+        sender: 'CIB',
+        body: body,
+        timestamp: at,
+        status: MessageStatus.parsed,
+        rule: 'transfer_ar',
+      ),
+      TransactionDraft(
+        messageKey: 'salary',
+        timestamp: at,
+        kind: TxKind.transferOut,
+        amountCents: 7700000,
+        currency: 'EGP',
+        merchant: null,
+        merchantKey: '',
+        source: 'CIB',
+      ),
+    );
+    final wrong = (await store.load()).transactions.single;
+    await store.addSplit(wrong.id, 1, 100000);
+
+    expect(await service(const []).reparseIfParserChanged(), 1);
+    final fixed = await store.load();
+    expect(fixed.transactions.single.kind, TxKind.transferIn);
+    expect(fixed.splits, isEmpty, reason: 'money in cannot be split');
+  });
+
   test('a backup restores exactly what was exported', () async {
     await service([purchase, notice]).sync();
     final exported = await store.exportTables();

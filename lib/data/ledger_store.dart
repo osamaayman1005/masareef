@@ -61,6 +61,63 @@ class LedgerStore {
     return rows.map(messageFromRow).toList();
   }
 
+  /// Messages already read as money, to re-check after a parser update.
+  Future<List<StoredMessage>> parsedMessages() async {
+    final rows = await _db.query(
+      'messages',
+      where: 'status = ?',
+      whereArgs: [MessageStatus.parsed.dbName],
+    );
+    return rows.map(messageFromRow).toList();
+  }
+
+  /// Rewrites a transaction that an updated parser reads differently, for
+  /// example a salary that was first read as money sent. Its category and
+  /// exclusion stay. Splits are removed when they no longer fit. Returns
+  /// true when something changed.
+  Future<bool> correctTransaction(TransactionDraft draft) =>
+      _db.transaction((txn) async {
+        final rows = await txn.query(
+          'transactions',
+          where: 'message_key = ?',
+          whereArgs: [draft.messageKey],
+        );
+        if (rows.isEmpty) {
+          return false;
+        }
+        final current = transactionFromRow(rows.first);
+        final unchanged = current.kind == draft.kind &&
+            current.amountCents == draft.amountCents &&
+            current.currency == draft.currency;
+        if (unchanged) {
+          return false;
+        }
+        await txn.update(
+          'transactions',
+          {
+            'kind': draft.kind.dbName,
+            'amount_cents': draft.amountCents,
+            'currency': draft.currency,
+            'egp_cents': draft.currency == 'EGP' ? draft.amountCents : null,
+            'merchant': draft.merchant,
+            'merchant_key': draft.merchantKey,
+            'card': draft.card,
+          },
+          where: 'id = ?',
+          whereArgs: [current.id],
+        );
+        final splitsStillFit = draft.kind.isAssignable &&
+            draft.amountCents == current.amountCents;
+        if (!splitsStillFit) {
+          await txn.delete(
+            'splits',
+            where: 'transaction_id = ?',
+            whereArgs: [current.id],
+          );
+        }
+        return true;
+      });
+
   Future<String?> messageBody(String key) async {
     final rows = await _db.query(
       'messages',

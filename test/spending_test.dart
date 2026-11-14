@@ -124,6 +124,8 @@ void main() {
     );
     expect(summary.totalCents, 0);
     expect(summary.incomeCents, 2670000);
+    expect(summary.incomeCount, 1);
+    expect(summary.incomeLine.kind, LineKind.moneyIn);
   });
 
   test('foreign charges wait in the Inbox and stay out of totals', () {

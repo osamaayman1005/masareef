@@ -95,7 +95,14 @@ class SpendingScreen extends StatelessWidget {
                 LeaderRow(
                   label: 'Money in',
                   cents: summary.incomeCents,
-                  note: 'Transfers and deposits. Not counted as spending.',
+                  note: '${plural(summary.incomeCount, 'transfer', 'transfers')}'
+                      ' and deposits. Not counted as spending.',
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute<void>(
+                      builder: (_) => LineScreen(line: summary.incomeLine),
+                    ),
+                  ),
                 ),
               ],
             ],
@@ -112,6 +119,7 @@ class SpendingScreen extends StatelessWidget {
         LineKind.unassignedCash ||
         LineKind.unassignedTransfer =>
           'Not split yet. Tap to say where it went.',
+        LineKind.moneyIn => 'Not counted as spending.',
       };
 }
 

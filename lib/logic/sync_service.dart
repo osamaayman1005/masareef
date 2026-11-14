@@ -91,7 +91,8 @@ class SyncService {
     return SyncReport(read: inbox.length, added: added, failed: failed);
   }
 
-  /// After an app update with new patterns, tries old failures again.
+  /// After an app update with new patterns, reads old failures again and
+  /// fixes payments the old patterns read wrongly. Returns how many changed.
   Future<int> reparseIfParserChanged() async {
     final stored = await store.meta(_parserVersionKey);
     if (stored == '${parser.patterns.version}') {
@@ -109,6 +110,20 @@ class SyncService {
               outcome, message.key, message.sender, message.timestamp),
         );
         recovered++;
+      }
+    }
+    for (final message in await store.parsedMessages()) {
+      final outcome = parser.parse(message.body);
+      if (outcome is ParsedSms) {
+        final draft = draftFrom(
+          outcome,
+          message.key,
+          message.sender,
+          message.timestamp,
+        );
+        if (await store.correctTransaction(draft)) {
+          recovered++;
+        }
       }
     }
     await store.setMeta(_parserVersionKey, '${parser.patterns.version}');
