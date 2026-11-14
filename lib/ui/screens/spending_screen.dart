@@ -95,7 +95,8 @@ class SpendingScreen extends StatelessWidget {
                 LeaderRow(
                   label: 'Money in',
                   cents: summary.incomeCents,
-                  note: '${plural(summary.incomeCount, 'transfer', 'transfers')}'
+                  note:
+                      '${plural(summary.incomeCount, 'transfer', 'transfers')}'
                       ' and deposits. Not counted as spending.',
                   onTap: () => Navigator.push(
                     context,

@@ -106,8 +106,8 @@ class LedgerStore {
           where: 'id = ?',
           whereArgs: [current.id],
         );
-        final splitsStillFit = draft.kind.isAssignable &&
-            draft.amountCents == current.amountCents;
+        final splitsStillFit =
+            draft.kind.isAssignable && draft.amountCents == current.amountCents;
         if (!splitsStillFit) {
           await txn.delete(
             'splits',
