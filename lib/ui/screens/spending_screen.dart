@@ -9,6 +9,7 @@ import 'package:masareef/ui/format.dart';
 import 'package:masareef/ui/screens/line_screen.dart';
 import 'package:masareef/ui/theme.dart';
 import 'package:masareef/ui/widgets/receipt.dart';
+import 'package:masareef/ui/widgets/sheets.dart';
 import 'package:material_ui/material_ui.dart';
 
 class SpendingScreen extends StatelessWidget {
@@ -142,6 +143,17 @@ class _Header extends StatelessWidget {
             ],
           ),
         ),
+        IconButton.filled(
+          tooltip: 'Add a payment',
+          onPressed: () => unawaited(_addPayment(context)),
+          style: IconButton.styleFrom(
+            backgroundColor: AppColors.ink,
+            foregroundColor: AppColors.paper,
+            minimumSize: const Size(48, 48),
+          ),
+          icon: const Icon(Icons.add),
+        ),
+        const SizedBox(width: 8),
         OutlinedButton.icon(
           onPressed: controller.syncing
               ? null
@@ -160,6 +172,32 @@ class _Header extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  /// Amount, then category. Dated now, counted like any other payment.
+  Future<void> _addPayment(BuildContext context) async {
+    final controller = AppScope.read(context);
+    final cents = await askAmount(
+      context,
+      title: 'Add a payment',
+      hint: 'For something the bank did not send an SMS for.',
+      confirmLabel: 'Next',
+    );
+    if (cents == null || !context.mounted) {
+      return;
+    }
+    final categoryId = await pickCategory(
+      context,
+      title: 'Which category?',
+      categories: controller.snapshot.categories,
+    );
+    if (categoryId == null) {
+      return;
+    }
+    await controller.addManualPayment(cents, categoryId);
+    if (context.mounted) {
+      showMessage(context, 'Added EGP ${formatCents(cents)}.');
+    }
   }
 }
 

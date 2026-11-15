@@ -98,6 +98,15 @@ class AppController extends ChangeNotifier {
   Future<void> categorizeTransaction(int id, int? categoryId) =>
       _write(() => store.setTransactionCategory(id, categoryId));
 
+  /// Records a payment the bank never sent an SMS for, dated now.
+  Future<void> addManualPayment(int cents, int categoryId) => _write(
+        () => store.addManualPayment(
+          cents: cents,
+          categoryId: categoryId,
+          at: DateTime.now(),
+        ),
+      );
+
   Future<void> addCategory(String name) =>
       _write(() => store.addCategory(name));
 

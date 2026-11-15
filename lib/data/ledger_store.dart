@@ -174,6 +174,30 @@ class LedgerStore {
   Future<void> setExcluded(int id, {required bool excluded}) =>
       _updateTransaction(id, {'excluded': excluded ? 1 : 0});
 
+  /// A payment typed by hand, with no SMS behind it.
+  Future<void> addManualPayment({
+    required int cents,
+    required int categoryId,
+    required DateTime at,
+  }) =>
+      _db.insert(
+        'transactions',
+        draftToRow(
+          TransactionDraft(
+            timestamp: at,
+            kind: TxKind.purchase,
+            amountCents: cents,
+            currency: 'EGP',
+            merchant: null,
+            merchantKey: '',
+            source: manualSource,
+            categoryId: categoryId,
+          ),
+        ),
+      );
+
+  static const String manualSource = 'Manual';
+
   Future<void> addSplit(int transactionId, int categoryId, int cents) =>
       _db.insert('splits', {
         'transaction_id': transactionId,

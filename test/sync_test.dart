@@ -3,6 +3,7 @@ import 'package:masareef/data/database.dart';
 import 'package:masareef/data/ledger_store.dart';
 import 'package:masareef/data/sms_source.dart';
 import 'package:masareef/domain/models.dart';
+import 'package:masareef/logic/spending.dart';
 import 'package:masareef/logic/sync_service.dart';
 import 'package:masareef/parser/sms_parser.dart';
 import 'package:masareef/parser/text_tools.dart';
@@ -231,6 +232,19 @@ void main() {
       egpCents: 10000,
     );
     expect((await store.load()).splits, isEmpty);
+  });
+
+  test('a payment added by hand counts in its category', () async {
+    final today = DateTime.now();
+    await store.addManualPayment(cents: 25000, categoryId: 1, at: today);
+
+    final snapshot = await store.load();
+    final payment = snapshot.transactions.single;
+    expect(payment.source, LedgerStore.manualSource);
+    expect(payment.messageKey, isNull);
+    final summary = summarize(snapshot, DayRange(today, today));
+    expect(summary.totalCents, 25000);
+    expect(summary.lines.single.categoryId, 1);
   });
 
   test('a backup restores exactly what was exported', () async {
