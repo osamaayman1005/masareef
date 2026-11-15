@@ -1,6 +1,9 @@
 import 'package:path/path.dart' as p;
 import 'package:sqflite/sqflite.dart';
 
+const _addKindSetByUser = 'ALTER TABLE transactions '
+    'ADD COLUMN kind_set_by_user INTEGER NOT NULL DEFAULT 0';
+
 /// Schema history. Append a new step for every change; never edit or remove
 /// an old one, or existing installs will lose data on update.
 const _migrations = <List<String>>[
@@ -64,8 +67,7 @@ const _migrations = <List<String>>[
   ],
   // v2: the user can correct a transaction's type; parser updates keep it.
   [
-    'ALTER TABLE transactions '
-        'ADD COLUMN kind_set_by_user INTEGER NOT NULL DEFAULT 0',
+    _addKindSetByUser,
   ],
 ];
 
