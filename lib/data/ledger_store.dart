@@ -27,6 +27,11 @@ class LedgerStore {
       orderBy: 'timestamp DESC',
     );
     final ignoreRules = await _db.query('ignore_rules', orderBy: 'id DESC');
+    final rates = await _db.query(
+      'meta',
+      where: 'key LIKE ?',
+      whereArgs: ['$_ratePrefix%'],
+    );
     return LedgerSnapshot(
       categories: categories.map(categoryFromRow).toList(),
       merchantRules: {
@@ -37,8 +42,15 @@ class LedgerStore {
       splits: splits.map(splitFromRow).toList(),
       messages: messages.map(messageFromRow).toList(),
       ignoreRules: ignoreRules.map(ignoreRuleFromRow).toList(),
+      rates: {
+        for (final row in rates)
+          (row['key']! as String).substring(_ratePrefix.length):
+              double.parse(row['value']! as String),
+      },
     );
   }
+
+  static const _ratePrefix = 'rate:';
 
   /// Keys of messages already stored at or after [since].
   Future<Set<String>> messageKeysSince(DateTime since) async {
@@ -86,7 +98,7 @@ class LedgerStore {
           return false;
         }
         final current = transactionFromRow(rows.first);
-        if (current.kindSetByUser) {
+        if (current.kindSetByUser || current.amountSetByUser) {
           return false;
         }
         final unchanged = current.kind == draft.kind &&
@@ -196,8 +208,44 @@ class LedgerStore {
   Future<void> setTransactionCategory(int id, int? categoryId) =>
       _updateTransaction(id, {'category_id': categoryId});
 
-  Future<void> setEgpAmount(int id, int egpCents) =>
-      _updateTransaction(id, {'egp_cents': egpCents});
+  /// Sets what a transaction cost, in [currency] and in EGP. Marked as set
+  /// by hand so parser updates keep it. Splits are removed when they would
+  /// add up to more than the new amount.
+  Future<void> setAmount(
+    int id, {
+    required String currency,
+    required int amountCents,
+    required int egpCents,
+  }) =>
+      _db.transaction((txn) async {
+        await txn.update(
+          'transactions',
+          {
+            'currency': currency,
+            'amount_cents': amountCents,
+            'egp_cents': egpCents,
+            'amount_set_by_user': 1,
+          },
+          where: 'id = ?',
+          whereArgs: [id],
+        );
+        final rows = await txn.rawQuery(
+          'SELECT COALESCE(SUM(amount_cents), 0) AS total '
+          'FROM splits WHERE transaction_id = ?',
+          [id],
+        );
+        if ((rows.first['total']! as int) > egpCents) {
+          await txn.delete(
+            'splits',
+            where: 'transaction_id = ?',
+            whereArgs: [id],
+          );
+        }
+      });
+
+  /// Remembers EGP per one unit of [currency] for the next suggestion.
+  Future<void> setRate(String currency, double egpPerUnit) =>
+      setMeta('$_ratePrefix$currency', '$egpPerUnit');
 
   Future<void> setExcluded(int id, {required bool excluded}) =>
       _updateTransaction(id, {'excluded': excluded ? 1 : 0});

@@ -87,6 +87,7 @@ class LedgerTransaction {
     required this.source,
     required this.excluded,
     this.kindSetByUser = false,
+    this.amountSetByUser = false,
     this.messageKey,
     this.categoryId,
     this.card,
@@ -122,6 +123,11 @@ class LedgerTransaction {
 
   /// The user corrected [kind] by hand. Parser updates never change it back.
   final bool kindSetByUser;
+
+  /// The user edited the amount or currency. Parser updates keep it.
+  final bool amountSetByUser;
+
+  bool get isForeign => currency != 'EGP';
 }
 
 /// New transaction before it has an id.
@@ -210,6 +216,7 @@ class LedgerSnapshot {
     required this.splits,
     required this.messages,
     required this.ignoreRules,
+    this.rates = const {},
   });
 
   static const LedgerSnapshot empty = LedgerSnapshot(
@@ -232,6 +239,16 @@ class LedgerSnapshot {
   /// failed, ignored and dismissed. Parsed ones live on their transaction.
   final List<StoredMessage> messages;
   final List<IgnoreRule> ignoreRules;
+
+  /// EGP per one unit of a currency, as the user last entered it. Typed by
+  /// the user and kept on the phone; nothing is fetched from the internet.
+  final Map<String, double> rates;
+
+  /// EGP cents for [cents] in [currency] at the saved rate, if there is one.
+  int? suggestEgp(String currency, int cents) {
+    final rate = rates[currency];
+    return rate == null ? null : (cents * rate).round();
+  }
 
   String categoryName(int id) {
     for (final category in categories) {

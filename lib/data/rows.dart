@@ -27,6 +27,7 @@ LedgerTransaction transactionFromRow(Map<String, Object?> row) {
     card: row['card'] as String?,
     excluded: row['excluded'] == 1,
     kindSetByUser: row['kind_set_by_user'] == 1,
+    amountSetByUser: row['amount_set_by_user'] == 1,
   );
 }
 

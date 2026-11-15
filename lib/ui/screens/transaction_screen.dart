@@ -1,11 +1,13 @@
 import 'dart:async';
 
 import 'package:masareef/domain/models.dart';
+import 'package:masareef/domain/money.dart';
 import 'package:masareef/parser/text_tools.dart';
 import 'package:masareef/state/app_controller.dart';
 import 'package:masareef/ui/app_scope.dart';
 import 'package:masareef/ui/format.dart';
 import 'package:masareef/ui/theme.dart';
+import 'package:masareef/ui/widgets/amount_sheet.dart';
 import 'package:masareef/ui/widgets/receipt.dart';
 import 'package:masareef/ui/widgets/sheets.dart';
 import 'package:masareef/ui/widgets/split_editor.dart';
@@ -50,13 +52,8 @@ class TransactionScreen extends StatelessWidget {
           const SizedBox(height: 16),
           _TypeSection(transaction: tx),
           const SizedBox(height: 16),
-          if (tx.egpCents == null) ...[
-            Callout(
-              text: 'Enter what this cost in EGP',
-              onTap: () => unawaited(_confirmEgp(context, tx)),
-            ),
-            const SizedBox(height: 16),
-          ],
+          _AmountSection(transaction: tx),
+          const SizedBox(height: 16),
           if (tx.kind.isAssignable && tx.egpCents != null)
             SplitEditor(transaction: tx)
           else if (tx.kind == TxKind.purchase || tx.kind == TxKind.refund)
@@ -81,18 +78,80 @@ class TransactionScreen extends StatelessWidget {
     );
   }
 
-  Future<void> _confirmEgp(BuildContext context, LedgerTransaction tx) async {
-    final controller = AppScope.read(context);
-    final cents = await askAmount(
-      context,
-      title: 'What did ${transactionAmount(tx)} cost?',
-      hint: 'Check the amount your bank charged in pounds.',
-      confirmLabel: 'Save',
+}
+
+/// The amount, its currency, and what it cost in EGP. All editable.
+class _AmountSection extends StatelessWidget {
+  const _AmountSection({required this.transaction});
+
+  final LedgerTransaction transaction;
+
+  @override
+  Widget build(BuildContext context) {
+    final tx = transaction;
+    final egp = tx.egpCents;
+    final note = !tx.isForeign
+        ? (tx.amountSetByUser ? 'Changed by you' : 'As the bank sent it')
+        : egp == null
+            ? 'EGP amount needed before it counts'
+            : 'Charged EGP ${formatCents(egp)}';
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SectionLabel('Amount'),
+                  const SizedBox(height: 2),
+                  Text(
+                    '${tx.currency} ${formatCents(tx.amountCents)}',
+                    style: AppText.strong,
+                  ),
+                  Text(note, style: AppText.note),
+                ],
+              ),
+            ),
+            OutlinedButton(
+              onPressed: () => unawaited(openAmountEditor(context, tx)),
+              child: const Text('Edit'),
+            ),
+          ],
+        ),
+        if (egp == null) ...[
+          const SizedBox(height: 10),
+          Callout(
+            text: 'Enter what this cost in EGP',
+            onTap: () => unawaited(openAmountEditor(context, tx)),
+          ),
+        ],
+      ],
     );
-    if (cents != null) {
-      await controller.confirmEgp(tx.id, cents);
-    }
   }
+}
+
+/// Opens the amount editor and saves the result. Shared with the Inbox.
+Future<void> openAmountEditor(
+  BuildContext context,
+  LedgerTransaction tx,
+) async {
+  final controller = AppScope.read(context);
+  final edit = await editAmount(
+    context,
+    transaction: tx,
+    snapshot: controller.snapshot,
+  );
+  if (edit == null) {
+    return;
+  }
+  await controller.editAmount(
+    tx.id,
+    currency: edit.currency,
+    amountCents: edit.amountCents,
+    egpCents: edit.egpCents,
+  );
 }
 
 /// Shows what the transaction is and lets the user correct it, for example

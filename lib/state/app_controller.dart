@@ -124,8 +124,25 @@ class AppController extends ChangeNotifier {
   Future<void> removeSplit(int splitId) =>
       _write(() => store.deleteSplit(splitId));
 
-  Future<void> confirmEgp(int transactionId, int cents) =>
-      _write(() => store.setEgpAmount(transactionId, cents));
+  /// Saves an edited amount. For another currency the EGP amount is what the
+  /// bank charged, and its rate is remembered for the next suggestion.
+  Future<void> editAmount(
+    int transactionId, {
+    required String currency,
+    required int amountCents,
+    required int egpCents,
+  }) =>
+      _write(() async {
+        await store.setAmount(
+          transactionId,
+          currency: currency,
+          amountCents: amountCents,
+          egpCents: egpCents,
+        );
+        if (currency != 'EGP' && amountCents > 0) {
+          await store.setRate(currency, egpCents / amountCents);
+        }
+      });
 
   Future<void> setExcluded(int transactionId, {required bool excluded}) =>
       _write(() => store.setExcluded(transactionId, excluded: excluded));

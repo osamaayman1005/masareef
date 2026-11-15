@@ -187,6 +187,52 @@ void main() {
     expect((await store.load()).splits, isEmpty);
   });
 
+  test('an edited foreign amount is kept and its rate remembered', () async {
+    await service([purchase]).sync();
+    final payment = (await store.load()).transactions.single;
+
+    await store.setAmount(
+      payment.id,
+      currency: 'USD',
+      amountCents: 999,
+      egpCents: 52000,
+    );
+    await store.setRate('USD', 52000 / 999);
+    await store.setMeta('parser_version', '0');
+    await service(const []).reparseIfParserChanged();
+
+    final snapshot = await store.load();
+    final kept = snapshot.transactions.single;
+    expect(kept.currency, 'USD');
+    expect(kept.amountCents, 999);
+    expect(kept.egpCents, 52000);
+    expect(snapshot.suggestEgp('USD', 1998), 104000);
+    expect(snapshot.suggestEgp('EUR', 100), isNull);
+  });
+
+  test('lowering an amount below its splits removes them', () async {
+    await service([purchase]).sync();
+    final payment = (await store.load()).transactions.single;
+    await store.setKind(payment.id, TxKind.cash);
+    await store.addSplit(payment.id, 1, 15000);
+
+    await store.setAmount(
+      payment.id,
+      currency: 'EGP',
+      amountCents: 20000,
+      egpCents: 20000,
+    );
+    expect((await store.load()).splits, hasLength(1));
+
+    await store.setAmount(
+      payment.id,
+      currency: 'EGP',
+      amountCents: 10000,
+      egpCents: 10000,
+    );
+    expect((await store.load()).splits, isEmpty);
+  });
+
   test('a backup restores exactly what was exported', () async {
     await service([purchase, notice]).sync();
     final exported = await store.exportTables();

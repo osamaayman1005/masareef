@@ -5,6 +5,7 @@ import 'package:masareef/domain/money.dart';
 import 'package:masareef/logic/inbox.dart';
 import 'package:masareef/ui/app_scope.dart';
 import 'package:masareef/ui/format.dart';
+import 'package:masareef/ui/screens/transaction_screen.dart';
 import 'package:masareef/ui/theme.dart';
 import 'package:masareef/ui/widgets/receipt.dart';
 import 'package:masareef/ui/widgets/sheets.dart';
@@ -66,7 +67,7 @@ class InboxScreen extends StatelessWidget {
                 detail: 'Charged in ${transaction.currency}. '
                     'Enter the EGP amount to count it.',
                 action: 'Enter EGP amount',
-                onTap: () => unawaited(_confirmEgp(context, transaction)),
+                onTap: () => unawaited(openAmountEditor(context, transaction)),
               ),
             UnreadMessage(:final message) =>
               UnreadMessageCard(message: message),
@@ -106,18 +107,6 @@ class InboxScreen extends StatelessWidget {
     }
   }
 
-  Future<void> _confirmEgp(BuildContext context, LedgerTransaction tx) async {
-    final controller = AppScope.read(context);
-    final cents = await askAmount(
-      context,
-      title: 'What did ${transactionAmount(tx)} cost?',
-      hint: 'Check the amount your bank charged in pounds.',
-      confirmLabel: 'Save',
-    );
-    if (cents != null) {
-      await controller.confirmEgp(tx.id, cents);
-    }
-  }
 }
 
 class _QuestionCard extends StatelessWidget {
