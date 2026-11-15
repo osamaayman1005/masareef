@@ -86,6 +86,7 @@ class LedgerTransaction {
     required this.merchantKey,
     required this.source,
     required this.excluded,
+    this.kindSetByUser = false,
     this.messageKey,
     this.categoryId,
     this.card,
@@ -118,6 +119,9 @@ class LedgerTransaction {
 
   /// Excluded from every total (for example a move between own accounts).
   final bool excluded;
+
+  /// The user corrected [kind] by hand. Parser updates never change it back.
+  final bool kindSetByUser;
 }
 
 /// New transaction before it has an id.

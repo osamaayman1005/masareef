@@ -86,6 +86,9 @@ class LedgerStore {
           return false;
         }
         final current = transactionFromRow(rows.first);
+        if (current.kindSetByUser) {
+          return false;
+        }
         final unchanged = current.kind == draft.kind &&
             current.amountCents == draft.amountCents &&
             current.currency == draft.currency;
@@ -198,6 +201,24 @@ class LedgerStore {
 
   Future<void> setExcluded(int id, {required bool excluded}) =>
       _updateTransaction(id, {'excluded': excluded ? 1 : 0});
+
+  /// Corrects what a transaction is, e.g. a debit that was really money in.
+  /// Splits are removed when the new type cannot be split.
+  Future<void> setKind(int id, TxKind kind) => _db.transaction((txn) async {
+        await txn.update(
+          'transactions',
+          {'kind': kind.dbName, 'kind_set_by_user': 1},
+          where: 'id = ?',
+          whereArgs: [id],
+        );
+        if (!kind.isAssignable) {
+          await txn.delete(
+            'splits',
+            where: 'transaction_id = ?',
+            whereArgs: [id],
+          );
+        }
+      });
 
   Future<void> addSplit(int transactionId, int categoryId, int cents) =>
       _db.insert('splits', {

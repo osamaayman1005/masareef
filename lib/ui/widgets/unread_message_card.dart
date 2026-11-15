@@ -78,29 +78,7 @@ class UnreadMessageCard extends StatelessWidget {
 
   Future<void> _enter(BuildContext context) async {
     final controller = AppScope.read(context);
-    final kind = await showModalBottomSheet<TxKind>(
-      context: context,
-      builder: (context) => SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const Text('What was it?', style: AppText.heading),
-              const SizedBox(height: 12),
-              for (final option in TxKind.values) ...[
-                OutlinedButton(
-                  onPressed: () => Navigator.pop(context, option),
-                  child: Text(kindLabel(option)),
-                ),
-                const SizedBox(height: 8),
-              ],
-            ],
-          ),
-        ),
-      ),
-    );
+    final kind = await pickKind(context, title: 'What was it?');
     if (kind == null || !context.mounted) {
       return;
     }

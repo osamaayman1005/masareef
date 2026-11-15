@@ -26,6 +26,14 @@ String kindLabel(TxKind kind) => switch (kind) {
       TxKind.transferIn => 'Money in',
     };
 
+String kindHint(TxKind kind) => switch (kind) {
+      TxKind.purchase => 'Money spent at a shop or service',
+      TxKind.refund => 'Money a shop gave back. Lowers its category',
+      TxKind.cash => 'Cash taken out. Split it later',
+      TxKind.transferOut => 'Money you sent. Split it later',
+      TxKind.transferIn => 'Money you received. Not spending',
+    };
+
 /// Merchant name when known, otherwise what kind of movement it was.
 String transactionTitle(LedgerTransaction tx) {
   final merchant = tx.merchant;

@@ -163,6 +163,30 @@ void main() {
     expect(fixed.splits, isEmpty, reason: 'money in cannot be split');
   });
 
+  test('a type the user corrects survives a parser update', () async {
+    await service([purchase]).sync();
+    final payment = (await store.load()).transactions.single;
+
+    await store.setKind(payment.id, TxKind.transferIn);
+    await store.setMeta('parser_version', '0');
+    await service(const []).reparseIfParserChanged();
+
+    final kept = (await store.load()).transactions.single;
+    expect(kept.kind, TxKind.transferIn);
+    expect(kept.kindSetByUser, isTrue);
+  });
+
+  test('changing a split transfer to money in removes its splits', () async {
+    await service([purchase]).sync();
+    final payment = (await store.load()).transactions.single;
+    await store.setKind(payment.id, TxKind.transferOut);
+    await store.addSplit(payment.id, 1, 5000);
+    expect((await store.load()).splits, hasLength(1));
+
+    await store.setKind(payment.id, TxKind.transferIn);
+    expect((await store.load()).splits, isEmpty);
+  });
+
   test('a backup restores exactly what was exported', () async {
     await service([purchase, notice]).sync();
     final exported = await store.exportTables();

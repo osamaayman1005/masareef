@@ -130,6 +130,9 @@ class AppController extends ChangeNotifier {
   Future<void> setExcluded(int transactionId, {required bool excluded}) =>
       _write(() => store.setExcluded(transactionId, excluded: excluded));
 
+  Future<void> changeKind(int transactionId, TxKind kind) =>
+      _write(() => store.setKind(transactionId, kind));
+
   // ---- Unread messages ----
 
   Future<void> ignoreFormat(StoredMessage message) => _write(() async {

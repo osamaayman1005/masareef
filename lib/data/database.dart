@@ -62,6 +62,11 @@ const _migrations = <List<String>>[
     'CREATE INDEX idx_transactions_time ON transactions(timestamp)',
     'CREATE INDEX idx_messages_time ON messages(timestamp)',
   ],
+  // v2: the user can correct a transaction's type; parser updates keep it.
+  [
+    'ALTER TABLE transactions '
+        'ADD COLUMN kind_set_by_user INTEGER NOT NULL DEFAULT 0',
+  ],
 ];
 
 const List<String> starterCategories = [

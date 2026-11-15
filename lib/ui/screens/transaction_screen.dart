@@ -48,6 +48,8 @@ class TransactionScreen extends StatelessWidget {
             style: AppText.note,
           ),
           const SizedBox(height: 16),
+          _TypeSection(transaction: tx),
+          const SizedBox(height: 16),
           if (tx.egpCents == null) ...[
             Callout(
               text: 'Enter what this cost in EGP',
@@ -89,6 +91,61 @@ class TransactionScreen extends StatelessWidget {
     );
     if (cents != null) {
       await controller.confirmEgp(tx.id, cents);
+    }
+  }
+}
+
+/// Shows what the transaction is and lets the user correct it, for example
+/// a transfer the bank worded like a debit that was really money in.
+class _TypeSection extends StatelessWidget {
+  const _TypeSection({required this.transaction});
+
+  final LedgerTransaction transaction;
+
+  @override
+  Widget build(BuildContext context) {
+    final tx = transaction;
+    return Row(
+      children: [
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SectionLabel('Type'),
+              const SizedBox(height: 2),
+              Text(kindLabel(tx.kind), style: AppText.strong),
+              Text(
+                tx.kindSetByUser ? 'Changed by you' : kindHint(tx.kind),
+                style: AppText.note,
+              ),
+            ],
+          ),
+        ),
+        OutlinedButton(
+          onPressed: () => unawaited(_change(context)),
+          child: const Text('Change'),
+        ),
+      ],
+    );
+  }
+
+  Future<void> _change(BuildContext context) async {
+    final controller = AppScope.read(context);
+    final hasSplits = controller.snapshot.splitsOf(transaction.id).isNotEmpty;
+    final picked = await pickKind(
+      context,
+      title: 'What is this really?',
+      current: transaction.kind,
+      warning: hasSplits
+          ? 'Its splits are removed if the new type cannot be split.'
+          : null,
+    );
+    if (picked == null || picked == transaction.kind) {
+      return;
+    }
+    await controller.changeKind(transaction.id, picked);
+    if (context.mounted) {
+      showMessage(context, 'Now counted as ${kindLabel(picked)}.');
     }
   }
 }

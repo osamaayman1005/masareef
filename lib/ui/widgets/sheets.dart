@@ -1,5 +1,6 @@
 import 'package:masareef/domain/models.dart';
 import 'package:masareef/domain/money.dart';
+import 'package:masareef/ui/format.dart';
 import 'package:masareef/ui/theme.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -45,6 +46,49 @@ Future<int?> pickCategory(
               TextButton(
                 onPressed: () => Navigator.pop(context),
                 child: const Text('Not now'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+
+/// Bottom sheet listing every transaction type with a short explanation.
+/// [current] is marked. Returns the picked type.
+Future<TxKind?> pickKind(
+  BuildContext context, {
+  required String title,
+  TxKind? current,
+  String? warning,
+}) =>
+    showModalBottomSheet<TxKind>(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) => SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(16, 20, 16, 12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(title, style: AppText.heading),
+              if (warning != null) ...[
+                const SizedBox(height: 4),
+                Text(warning, style: AppText.note),
+              ],
+              const SizedBox(height: 12),
+              for (final kind in TxKind.values)
+                ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: Text(kindLabel(kind), style: AppText.strong),
+                  subtitle: Text(kindHint(kind), style: AppText.note),
+                  trailing: kind == current
+                      ? const Icon(Icons.check, color: AppColors.action)
+                      : null,
+                  onTap: () => Navigator.pop(context, kind),
+                ),
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Cancel'),
               ),
             ],
           ),
