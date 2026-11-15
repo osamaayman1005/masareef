@@ -13,7 +13,8 @@ lib/
   domain/   Plain data types and money helpers. Imports nothing from the app.
   parser/   SMS text -> ParseOutcome. Pure Dart. Patterns live in
             assets/parser/patterns.json, not in code.
-  data/     SQLite (database.dart, ledger_store.dart) and the SMS channel.
+  data/     SQLite (database.dart, ledger_store.dart, corrections_store.dart,
+            backup_store.dart) and the SMS channel.
             The only place that knows SQL or platform channels.
   logic/    Pure functions and services: totals, inbox, sync.
   state/    AppController: the one object screens talk to.

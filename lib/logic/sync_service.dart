@@ -121,7 +121,7 @@ class SyncService {
           message.sender,
           message.timestamp,
         );
-        if (await store.correctTransaction(draft)) {
+        if (await store.corrections.correctTransaction(draft)) {
           recovered++;
         }
       }

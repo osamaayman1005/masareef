@@ -50,9 +50,8 @@ class _AmountSheetState extends State<_AmountSheet> {
     text: _plain(widget.transaction.amountCents),
   );
   late final _egp = TextEditingController(
-    text: widget.transaction.isForeign
-        ? _plain(widget.transaction.egpCents)
-        : '',
+    text:
+        widget.transaction.isForeign ? _plain(widget.transaction.egpCents) : '',
   );
 
   /// Once the user types the EGP amount, suggestions stop overwriting it.

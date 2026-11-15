@@ -5,10 +5,10 @@ import 'package:masareef/domain/money.dart';
 import 'package:masareef/logic/inbox.dart';
 import 'package:masareef/ui/app_scope.dart';
 import 'package:masareef/ui/format.dart';
-import 'package:masareef/ui/screens/transaction_screen.dart';
 import 'package:masareef/ui/theme.dart';
 import 'package:masareef/ui/widgets/receipt.dart';
 import 'package:masareef/ui/widgets/sheets.dart';
+import 'package:masareef/ui/widgets/transaction_sections.dart';
 import 'package:masareef/ui/widgets/unread_message_card.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -106,7 +106,6 @@ class InboxScreen extends StatelessWidget {
       await controller.categorizeTransaction(tx.id, picked);
     }
   }
-
 }
 
 class _QuestionCard extends StatelessWidget {

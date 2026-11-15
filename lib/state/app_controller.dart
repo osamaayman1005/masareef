@@ -133,7 +133,7 @@ class AppController extends ChangeNotifier {
     required int egpCents,
   }) =>
       _write(() async {
-        await store.setAmount(
+        await store.corrections.setAmount(
           transactionId,
           currency: currency,
           amountCents: amountCents,
@@ -148,7 +148,7 @@ class AppController extends ChangeNotifier {
       _write(() => store.setExcluded(transactionId, excluded: excluded));
 
   Future<void> changeKind(int transactionId, TxKind kind) =>
-      _write(() => store.setKind(transactionId, kind));
+      _write(() => store.corrections.setKind(transactionId, kind));
 
   // ---- Unread messages ----
 
@@ -221,7 +221,7 @@ class AppController extends ChangeNotifier {
         'app': 'masareef',
         'format': 1,
         'exportedAt': DateTime.now().toIso8601String(),
-        'tables': await store.exportTables(),
+        'tables': await store.backup.exportTables(),
       });
 
   /// Throws [FormatException] when the text is not a Masareef backup.
@@ -247,7 +247,7 @@ class AppController extends ChangeNotifier {
             throw const FormatException('The backup is damaged.'),
       ];
     }
-    await _write(() => store.importTables(rows));
+    await _write(() => store.backup.importTables(rows));
   }
 
   // ---- Internals ----

@@ -167,7 +167,7 @@ void main() {
     await service([purchase]).sync();
     final payment = (await store.load()).transactions.single;
 
-    await store.setKind(payment.id, TxKind.transferIn);
+    await store.corrections.setKind(payment.id, TxKind.transferIn);
     await store.setMeta('parser_version', '0');
     await service(const []).reparseIfParserChanged();
 
@@ -179,11 +179,11 @@ void main() {
   test('changing a split transfer to money in removes its splits', () async {
     await service([purchase]).sync();
     final payment = (await store.load()).transactions.single;
-    await store.setKind(payment.id, TxKind.transferOut);
+    await store.corrections.setKind(payment.id, TxKind.transferOut);
     await store.addSplit(payment.id, 1, 5000);
     expect((await store.load()).splits, hasLength(1));
 
-    await store.setKind(payment.id, TxKind.transferIn);
+    await store.corrections.setKind(payment.id, TxKind.transferIn);
     expect((await store.load()).splits, isEmpty);
   });
 
@@ -191,7 +191,7 @@ void main() {
     await service([purchase]).sync();
     final payment = (await store.load()).transactions.single;
 
-    await store.setAmount(
+    await store.corrections.setAmount(
       payment.id,
       currency: 'USD',
       amountCents: 999,
@@ -213,10 +213,10 @@ void main() {
   test('lowering an amount below its splits removes them', () async {
     await service([purchase]).sync();
     final payment = (await store.load()).transactions.single;
-    await store.setKind(payment.id, TxKind.cash);
+    await store.corrections.setKind(payment.id, TxKind.cash);
     await store.addSplit(payment.id, 1, 15000);
 
-    await store.setAmount(
+    await store.corrections.setAmount(
       payment.id,
       currency: 'EGP',
       amountCents: 20000,
@@ -224,7 +224,7 @@ void main() {
     );
     expect((await store.load()).splits, hasLength(1));
 
-    await store.setAmount(
+    await store.corrections.setAmount(
       payment.id,
       currency: 'EGP',
       amountCents: 10000,
@@ -235,10 +235,10 @@ void main() {
 
   test('a backup restores exactly what was exported', () async {
     await service([purchase, notice]).sync();
-    final exported = await store.exportTables();
-    await store.importTables({});
+    final exported = await store.backup.exportTables();
+    await store.backup.importTables({});
     expect((await store.load()).transactions, isEmpty);
-    await store.importTables(exported);
+    await store.backup.importTables(exported);
     final restored = await store.load();
     expect(restored.transactions, hasLength(1));
     expect(restored.messages, hasLength(1));
